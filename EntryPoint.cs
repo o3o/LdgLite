@@ -121,16 +121,28 @@ namespace Talaran.Ldg {
       }
       private static string GetCatFileName(Options options) {
          string catFileName = string.Empty;
-         if (options.Action == Action.CreateList) {
-            catFileName = "../../doc/list.csv";
-         } else {
-            catFileName = "../../doc/cat.csv";
-         }
+         switch (options.Action) {
+            case Action.Interactive:
+            case Action.CreateList: {
+               catFileName = "../../doc/list.csv";
+               break;
+            }
+            case Action.CreateResult: {
+               catFileName = "../../doc/cat.csv";
+               break;
+            }
+            default: {
+               throw new System.ArgumentException("invalid"); 
+            }
+
+         } 
          if (!string.IsNullOrEmpty(options.Categories)) {
             catFileName = options.Categories;
-         }         
+         } 
+         if (log.IsDebugEnabled) log.Debug("use category: " + catFileName);
          return catFileName;
       }
+
       private static string GetReportFileName(Options options) {
          string reportFileName = string.Empty;
          if (options.Action == Action.CreateList) {
@@ -138,10 +150,10 @@ namespace Talaran.Ldg {
          } else {
             reportFileName = string.Format("../../doc/class{0}.pdf", options.YearEdition);
          }
-         
          if (!string.IsNullOrEmpty(options.Output)) {
             reportFileName = options.Output;
          }
+         if (log.IsDebugEnabled) log.Debug("report: " + reportFileName);
          return reportFileName;
       }
    }
