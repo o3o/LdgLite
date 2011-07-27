@@ -1,0 +1,7 @@
+* LdgLite
+Genera classifiche per il torneo Luca De Gerone utilizzando un db sqlite.
+
+I dati in ingresso sono in CSV (sep. da ;) e utilizza  FileHelper per eseguire il parser.
+
+* Creazione del db
+$ sqlite3 ldg2011.sqlite < ../sql/create.sql
