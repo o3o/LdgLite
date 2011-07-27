@@ -16,25 +16,9 @@ namespace Talaran.Ldg {
 
       }
 
-      public void BeginDoc(int year) { 
-         var title =
-           new IT.Phrase("Trofeo Luca De Gerone",
-                         IT.FontFactory.GetFont(IT.FontFactory.HELVETICA, 26, IT.Font.BOLD)
-                         );
-         
-         
-         var par = new IT.Paragraph();
-         par.SpacingAfter = 10;
-         par.Alignment = IT.Element.ALIGN_CENTER;
-         par.Add(title);
-         par.Add(new IT.Phrase(year.ToString() ));
-         
-         document.Add(par);
-
-         
-      }
-      public void BeginReport(string title) { 
-         SetTable(title);
+      
+      public void BeginReport(string title, int year) { 
+         SetTable(title, year);
 
       }
       public void EndReport() {
@@ -44,7 +28,9 @@ namespace Talaran.Ldg {
 
        
       public void Add(Athlete athete) {
-         var data =
+         
+
+          var data =
             new IT.Phrase(athete.Id.ToString() ,
                           IT.FontFactory.GetFont(IT.FontFactory.HELVETICA, SIZE_ROW, IT.Font.NORMAL));
 
@@ -53,30 +39,50 @@ namespace Talaran.Ldg {
           cell.PaddingBottom = PAD_BOTTOM;
           table.AddCell(cell);
          
-          data = new IT.Phrase(athete.Surname + " "  + athete.Name,
-                         IT.FontFactory.GetFont(IT.FontFactory.HELVETICA, SIZE_ROW, IT.Font.NORMAL));
+         data = new IT.Phrase(athete.Surname + " "  + athete.Name,
+                              IT.FontFactory.GetFont(IT.FontFactory.HELVETICA, SIZE_ROW, IT.Font.NORMAL));
          cell = new IT.pdf.PdfPCell(data);
          cell.HorizontalAlignment = IT.Element.ALIGN_LEFT; 
          cell.PaddingBottom = PAD_BOTTOM;
-
          table.AddCell(cell);
-         table.AddCell(new IT.pdf.PdfPCell());
+
+
+         data = new IT.Phrase(" ",
+                              IT.FontFactory.GetFont(IT.FontFactory.HELVETICA, SIZE_TITLE, IT.Font.NORMAL));
+         cell = new IT.pdf.PdfPCell(data);
+         cell.HorizontalAlignment = IT.Element.ALIGN_LEFT; 
+         cell.PaddingBottom = PAD_BOTTOM;
+         table.AddCell(cell);
          
       }
-      private void SetTable(string titleString) {
-         
+      private void SetTable(string titleString, int year) {
+
+         var ed =
+           new IT.Phrase("Trofeo Luca De Gerone" + year.ToString() ,
+                         IT.FontFactory.GetFont(IT.FontFactory.HELVETICA, SIZE_TITLE + 2, IT.Font.BOLD)
+                         );
+
+
          var title =
            new IT.Phrase(titleString,
                          IT.FontFactory.GetFont(IT.FontFactory.HELVETICA, SIZE_TITLE, IT.Font.BOLD)
                          );
          //pett, nome ,  tempo
-         float[] widths = {2f,6f,4f};
+         float[] widths = {1f,6f,4f};
          table = new IT.pdf.PdfPTable(widths);
          table.HeaderRows = 2;
          table.DefaultCell.Border = IT.Rectangle.NO_BORDER;
          
-         // intesatzione
-         var cell = new IT.pdf.PdfPCell(title);
+         // edizione
+         var cell = new IT.pdf.PdfPCell(ed);
+         cell.HorizontalAlignment = IT.Element.ALIGN_CENTER; 
+         cell.Colspan = COLUMNS;
+         cell.PaddingBottom = PAD_BOTTOM;
+         table.AddCell(cell);
+
+
+         // intesatazione
+         cell = new IT.pdf.PdfPCell(title);
          cell.HorizontalAlignment = IT.Element.ALIGN_CENTER; 
          cell.Colspan = COLUMNS;
          cell.PaddingBottom = PAD_BOTTOM;
@@ -110,14 +116,6 @@ namespace Talaran.Ldg {
          cell.HorizontalAlignment = IT.Element.ALIGN_RIGHT; 
          cell.PaddingBottom = PAD_BOTTOM;
          table.AddCell(cell);
-      }
-      private IT.pdf.PdfPCell GetEmptyRow() {
-         var cell = new IT.pdf.PdfPCell();
-         cell.Border = IT.Rectangle.NO_BORDER;
-         cell.HorizontalAlignment = IT.Element.ALIGN_CENTER; 
-         cell.Colspan = COLUMNS;
-         cell.PaddingBottom = 20F;         
-         return cell;
       }
    }
 }

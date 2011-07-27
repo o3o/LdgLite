@@ -44,13 +44,13 @@ namespace Talaran.Ldg {
                   builder = new PdfBuilder(document);
                }
 
-               builder.BeginDoc(options.YearEdition);
+
                FileHelpers.FileHelperEngine<Category> engineCat = new FileHelpers.FileHelperEngine<Category>();
                Category[] cats = engineCat.ReadFile(options.Categories);
                
                foreach (Category cat in cats) {
                   if (log.IsDebugEnabled) log.Debug("parse" + cat.Id);
-                  builder.BeginReport(cat.Title);
+                  builder.BeginReport(cat.Title, options.YearEdition);
                   var athletes = repo.Query(string.Format (cat.Sql, options.YearEdition));
                   foreach (Athlete athlete in athletes) {
                      builder.Add(athlete);
