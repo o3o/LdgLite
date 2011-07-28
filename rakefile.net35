@@ -6,15 +6,15 @@ require 'rake/clean'
 ##############################
 def getver() 
   if File.exists?('AssemblyInfo.cs') then
-  File.open 'AssemblyInfo.cs', 'r' do |file|
-    file.each do |line|
-      if line =~ /.+(\d+)\.(\d+)\.(\d+)/
-        return "#{$1}." + "%02d" % "#{$2}"
-      end
-    end
-  end
+     File.open 'AssemblyInfo.cs', 'r' do |file|
+       file.each do |line|
+         if line =~ /.+(\d+)\.(\d+)\.(\d+)/
+            return "#{$1}." + "%02d" % "#{$2}"
+         end
+       end
+     end
    end
-  return ""
+   return ""
 end
 
 ##################
@@ -29,35 +29,31 @@ ASSEMBLY_UNDER_TEST = ""
 
 TOP_DIR = ENV['CS_DIR']
 LIB_DIR = "#{TOP_DIR}/lib"
-BUILD_DIR = 'bin/build-mono'
+BUILD_DIR = 'bin/build-net-3_5'
 PUBLISH_DIR = "#{LIB_DIR}/Microline/#{BASE_NAME}/#{getver}"
 
-#TEST_PKG = ["Moq.dll", "./nunit.framework.dll"]
-# SYS_PKG = [ "System.Data.dll",  "System.Core.dll",  "System.Drawing.dll", "System.Windows.Forms"]
-#  "#{LIB_DIR}/Moq/4.00/Moq.dll"  => "#{BUILD_DIR}/Moq.dll",
-#  "#{LIB_DIR}/nunit.framework/2.05/nunit.framework.dll"  => "#{BUILD_DIR}/nunit.framework.dll",
-#  "#{LIB_DIR}/Ploeh.AutoFixture/Ploeh.AutoFixture.dll" => "#{BUILD_DIR}/Ploeh.AutoFixture.dll",
-#  "#{LIB_DIR}/NBuilder/2.03/FizzWare.NBuilder.dll
-#  "#{LIB_DIR}/0.2/net/SystemWrapper.dll"=> "#{BUILD_DIR}/SystemWrapper.dll",
-
 REFS = [
-#   TEST_PKG, 
-#   SYS_PKG, 
+#  "#{ASSEMBLY_UNDER_TEST}",
   "log4net.dll",
   "CommandLine.dll",
   "FileHelpers.dll", 
   "itextsharp.dll", 
-  "System.Data.dll",
-  "Mono.Data.Sqlite.dll"
-
+  "System.Data.SQLite.dll"
 ]
 
 EXTERNAL = {
-  "#{LIB_DIR}/log4net/1.02/mono/log4net.dll" => "#{BUILD_DIR}/log4net.dll",
+  "#{LIB_DIR}/log4net/1.02/net/log4net.dll" => "#{BUILD_DIR}/log4net.dll",
   "#{LIB_DIR}/CommandLine/1.08/CommandLine.dll" => "#{BUILD_DIR}/CommandLine.dll",
   "#{LIB_DIR}/itextsharp/5.00/itextsharp.dll" => "#{BUILD_DIR}/itextsharp.dll",
-  "#{LIB_DIR}//FileHelpers/2.00/FileHelpers.dll" => "#{BUILD_DIR}/FileHelpers.dll",
+  "#{LIB_DIR}/FileHelpers/2.00/FileHelpers.dll" => "#{BUILD_DIR}/FileHelpers.dll",
+  "#{LIB_DIR}/System.Data.SQLite/1.00/net/System.Data.SQLite.dll" => "#{BUILD_DIR}/System.Data.SQLite.dll"
+#  "#{LIB_DIR}/Moq/4.00/Moq.dll"  => "#{BUILD_DIR}/Moq.dll",
+#  "#{LIB_DIR}/nunit.framework/2.05/nunit.framework.dll"  => "#{BUILD_DIR}/nunit.framework.dll",
+#  "#{LIB_DIR}/Ploeh.AutoFixture/Ploeh.AutoFixture.dll" => "#{BUILD_DIR}/Ploeh.AutoFixture.dll",
+#  "#{LIB_DIR}/NBuilder/2.03/FizzWare.NBuilder.dll" => "#{BUILD_DIR}/FizzWare.NBuilder.dll",
+#  "#{LIB_DIR}/0.2/net/SystemWrapper.dll" => "#{BUILD_DIR}/SystemWrapper.dll",
 }
+
 
 ##############################
 # PROGRAM
@@ -65,15 +61,17 @@ EXTERNAL = {
 
 NLOC = "~/nloc"
 NGETVER = "~/ngetversion"
-NGETTEXT = "mono ~/cs/lib/tools/NGetText/NGetText.exe"
+NGETTEXT = "~/cs/lib/tools/NGetText/NGetText.exe"
 CTAGS = "ctags"
-CSC = "dmcs"
-NUNIT = "~/nunit -nologo"
-RESGEN = "resgen"
+CSC = "C:/WINDOWS/Microsoft.NET/Framework/v3.5/csc.exe"
+NUNIT = "~/nunit"
+RESGEN = "~/resgen"
 
 ##############################
 # CODING
 ##############################
+
+SRC.gsub!(/\//, "\\\\\\")
 
 NAME = TARGET == 'library' ? "#{BASE_NAME}.dll" : "#{BASE_NAME}.exe"
 FULL_NAME="#{BUILD_DIR}/#{NAME}"
@@ -85,10 +83,12 @@ CLOBBER.include("#{FULL_NAME}")
 directory BUILD_DIR
 
 task :default => :compile
+
 task :up do
   Rake.application.invoke_task("update[f]")
 end
 
+# vedi http://stackoverflow.com/questions/825748/how-do-i-pass-command-line-arguments-to-a-rake-task
 task :upv do
   Rake.application.invoke_task("update[t]")
 end
@@ -103,15 +103,15 @@ end
 
 desc "Forza la compilazione"
 task :force do
-  sh "#{CSC} -debug -out:#{FULL_NAME} -target:#{TARGET} #{RES_OPT} -lib:#{BUILD_DIR} -r:#{REFS.join(',')} #{SRC}"
+  sh "#{CSC} -nologo -debug:pdbonly -define:NET -out:#{FULL_NAME} -target:#{TARGET} #{RES_OPT} -lib:#{BUILD_DIR} #{REFS.collect{|r| "-r:" + r}.join(' ')} #{SRC}"
 end
 
 desc "Copia i file definiti in EXTERNAL"
 task :update, [:verbose] => BUILD_DIR do |t, args|
   EXTERNAL.each do |src, trgt| 
     if File.exists?(src)
-    if uptodate?(src, [trgt])
-      cp src,trgt, :verbose=>true
+      if uptodate?(src, [trgt])
+        cp src,trgt, :verbose=>true
         puts "updated: #{src}" if (args[:verbose] == 't')
       else 
         puts "not updated: #{src}" if (args[:verbose] == 't')

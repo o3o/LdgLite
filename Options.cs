@@ -1,29 +1,31 @@
 namespace Talaran.Ldg {
+   public enum Action {
+      Interactive,
+      Insert,
+      CreateList,
+      CreateResult,
+      Module
+   }
    public class Options {
+      [CommandLine.Option("a", "action", Required = true,
+                          HelpText = "Azione da eseguire (Interactive, Insert, CreateList, CreateResult)")]
+      public Action Action = Action.CreateResult;
 
-      [CommandLine.Option("", "insert", Required = false, HelpText = "Inserisce i file cvs nel db")]
-      public bool Insert = false;
-
-      [CommandLine.Option("l", "list", Required = false, HelpText = "Crea solo una lista ")]
-      public bool List = false;
-
-      [CommandLine.Option("y", "year", Required = true, HelpText = "Anno")]
+      [CommandLine.Option("y", "year", Required = false, HelpText = "Anno. Solo per Create*")]
       public int YearEdition = 2011;
       
-      [CommandLine.Option("d", "db", Required = true, HelpText = "Database")]
-      public string Database  = "../../doc/ldg.sqlite";
+      [CommandLine.Option("d", "db", Required = true, HelpText = "Database.")]
+      public string Database  = "../../db/ldg2011.sqlite";
 
-      [CommandLine.Option("i", "input", Required = false, HelpText = "Files cvs di input (atleti)")]
-      public string Input  = "../../doc/athletes.csv";
+      [CommandLine.Option("i", "input", Required = false, HelpText = "File cvs di input (atleti). Solo in caso di Insert")]
+      public string Input  = "../../doc/athletes2011.csv";
 
-
-      [CommandLine.Option("c", "create", Required = false, HelpText = "Crea la classifica in base al file di configurazione")]
-      public string Categories = "../../doc/cat.csv";
-
+      [CommandLine.Option("c", "config", Required = false, HelpText = "File di configurazione. Solo in caso di Interactive, Create*")]
+      public string Categories = string.Empty;
 
       
-      [CommandLine.Option("o", "output", Required = false, HelpText = "File pdf di output.")]
-      public string Output = "../../doc/report.pdf";
+      [CommandLine.Option("o", "output", Required = false, HelpText = "File pdf di output. Solo in caso di Create*")]
+      public string Output = string.Empty;
 
       
       [CommandLine.HelpOption(HelpText = "Display this help screen.")]
@@ -32,7 +34,7 @@ namespace Talaran.Ldg {
          help.Copyright = new CommandLine.Text.CopyrightInfo("Gruppo Ragni", 2009, 2014);
          help.AddPreOptionsLine("by ODV");
          help.AddPreOptionsLine("====================");
-         help.AddPreOptionsLine("Usage: Ldg -y 2011");
+         help.AddPreOptionsLine("Usage: Ldg -a createresult -y 2011 -d ../../db/ldg.sqlite -c ../../doc/cat.cvs -");
          help.AddOptions(this);
          return help;
       }
