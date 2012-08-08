@@ -19,6 +19,16 @@ $ sqlite3 ldg2011.sqlite < ../sql/create.sql
 
 * Uso
 
+** Creare il modulo di iscrizione
+: Lgd.exe -a module -y2011 -d ../../db/ldg11.sqlite
+Il db non e' usato, ma si deve passarlo lo stesso. Il report generato e' module.pdf
+
+** Popolare in db in base al file csv di input
+
+: Lgd.exe -a insert -d ../../db/ldg11.sqlite -i ../../doc/athlete2011.csv
+
+Il file di input deve essere specificato e 
+
 ** Create la lista di partenza
  
 : Lgd.exe -a cretelist -y2011 -d ../../db/ldg11.sqlite
@@ -28,17 +38,6 @@ file di output ~../../doc/list2011.pdf~
 
 Per indicare diversamente
 : Lgd.exe -a createlist -y2011 -d ../../db/ldg11.sqlite -i ../../doc/nuovalista.csv -o ../../nuovoreport.pdf
-
-
-** Create la classifica
- 
-: Lgd.exe -a createresult -y2011 -d ../../db/ldg11.sqlite
-
-in questo caso come file di configurazione usa ~../../doc/cat.csv~ e come
-file di output ~../../doc/class2011.pdf~
-
-Per indicare diversamente
-: Lgd.exe -a cretelist -y2011 -d ../../db/ldg11.sqlite -i ../../doc/nuovacat.csv -o ../../nuovoreport.pdf
 
 ** Inserire iterattivamente i tempi  
 
@@ -53,12 +52,12 @@ I tempi possono essere inseriti separati con + oppure . ad esempio
 |    2+5 | 02:05.00   |
 |    2+0 | 02:00.00   |
 
-** Popolare in db in base al file csv di input
+** Create la classifica
+ 
+: Lgd.exe -a createresult -y2011 -d ../../db/ldg11.sqlite
 
-: Lgd.exe -a insert -d ../../db/ldg11.sqlite -i ../../doc/athlete2011.csv
+in questo caso come file di configurazione usa ~../../doc/cat.csv~ e come
+file di output ~../../doc/class2011.pdf~
 
-Il file di input deve essere specificato e 
-
-** Creare il modulo di iscrizione
-: Lgd.exe -a module -y2011 -d ../../db/ldg11.sqlite
-Il db non e' usato, ma si deve passarlo lo stesso. Il report generato e' module.pdf
+Per indicare diversamente
+: Lgd.exe -a cretelist -y2011 -d ../../db/ldg11.sqlite -i ../../doc/nuovacat.csv -o ../../nuovoreport.pdf
