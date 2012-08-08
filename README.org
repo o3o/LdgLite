@@ -8,6 +8,28 @@ $ sqlite3 ldg2011.sqlite < ../sql/create.sql
 
 * Opzioni
 
+** a, action    
+Indca l'azione da eseguire (Interactive, Insert, CreateList,
+CreateResult). In base al tipo di azione si possono impostare altre
+opzioni
+
+**  y, year      
+Anno corrente. Solo per Create*
+
+**  d, db        
+Database da utilizzare
+
+** i, input     
+Nome del file cvs di input (atleti). 
+Solo in caso di azione *Insert*
+
+** c, config    
+File di configurazione. Solo in caso di Interactive, CreateList e CreateResult
+
+** o, output
+File pdf di output. Solo con action CreateList e CreateResult
+
+
 | action       | year | db | input | config | output |
 |--------------+------+----+-------+--------+--------|
 | Interactive  | x    | x  | -     | x      | -      |
@@ -31,7 +53,7 @@ Il file di input deve essere specificato e
 
 ** Create la lista di partenza
  
-: Lgd.exe -a cretelist -y2011 -d ../../db/ldg11.sqlite
+: Lgd.exe -a createlist -y2011 --db ../../db/ldg11.sqlite
 
 in questo caso come file di configurazione usa ~../../doc/list.csv~ e come
 file di output ~../../doc/list2011.pdf~
@@ -52,7 +74,7 @@ I tempi possono essere inseriti separati con + oppure . ad esempio
 |    2+5 | 02:05.00   |
 |    2+0 | 02:00.00   |
 
-** Create la classifica
+** Creare la classifica
  
 : Lgd.exe -a createresult -y2011 -d ../../db/ldg11.sqlite
 
