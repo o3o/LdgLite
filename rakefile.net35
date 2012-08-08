@@ -1,0 +1,172 @@
+# per compilare con i file di risorse togliere i commenti (1)
+# per usare con unit test togliere i commenti (2)
+require 'rake/clean'
+##############################
+# FUNC
+##############################
+def getver() 
+  if File.exists?('AssemblyInfo.cs') then
+     File.open 'AssemblyInfo.cs', 'r' do |file|
+       file.each do |line|
+         if line =~ /.+(\d+)\.(\d+)\.(\d+)/
+            return "#{$1}." + "%02d" % "#{$2}"
+         end
+       end
+     end
+   end
+   return ""
+end
+
+##################
+# SETTING
+##################
+
+SRC = FileList[ '*.cs']
+
+BASE_NAME = "Ldg"
+TARGET = 'exe'
+ASSEMBLY_UNDER_TEST = ""
+
+TOP_DIR = ENV['CS_DIR']
+LIB_DIR = "#{TOP_DIR}/lib"
+BUILD_DIR = 'bin/build-net-3_5'
+PUBLISH_DIR = "#{LIB_DIR}/Microline/#{BASE_NAME}/#{getver}"
+
+REFS = [
+#  "#{ASSEMBLY_UNDER_TEST}",
+  "log4net.dll",
+  "CommandLine.dll",
+  "FileHelpers.dll", 
+  "itextsharp.dll", 
+  "System.Data.SQLite.dll"
+]
+
+EXTERNAL = {
+  "#{LIB_DIR}/log4net/1.02/net/log4net.dll" => "#{BUILD_DIR}/log4net.dll",
+  "#{LIB_DIR}/CommandLine/1.08/CommandLine.dll" => "#{BUILD_DIR}/CommandLine.dll",
+  "#{LIB_DIR}/itextsharp/5.00/itextsharp.dll" => "#{BUILD_DIR}/itextsharp.dll",
+  "#{LIB_DIR}/FileHelpers/2.00/FileHelpers.dll" => "#{BUILD_DIR}/FileHelpers.dll",
+  "#{LIB_DIR}/System.Data.SQLite/1.00/net/System.Data.SQLite.dll" => "#{BUILD_DIR}/System.Data.SQLite.dll"
+#  "#{LIB_DIR}/Moq/4.00/Moq.dll"  => "#{BUILD_DIR}/Moq.dll",
+#  "#{LIB_DIR}/nunit.framework/2.05/nunit.framework.dll"  => "#{BUILD_DIR}/nunit.framework.dll",
+#  "#{LIB_DIR}/Ploeh.AutoFixture/Ploeh.AutoFixture.dll" => "#{BUILD_DIR}/Ploeh.AutoFixture.dll",
+#  "#{LIB_DIR}/NBuilder/2.03/FizzWare.NBuilder.dll" => "#{BUILD_DIR}/FizzWare.NBuilder.dll",
+#  "#{LIB_DIR}/0.2/net/SystemWrapper.dll" => "#{BUILD_DIR}/SystemWrapper.dll",
+}
+
+
+##############################
+# PROGRAM
+##############################
+
+NLOC = "~/nloc"
+NGETVER = "~/ngetversion"
+NGETTEXT = "~/cs/lib/tools/NGetText/NGetText.exe"
+CTAGS = "ctags"
+CSC = "C:/WINDOWS/Microsoft.NET/Framework/v3.5/csc.exe"
+NUNIT = "~/nunit"
+RESGEN = "~/resgen"
+
+##############################
+# CODING
+##############################
+
+SRC.gsub!(/\//, "\\\\\\")
+
+NAME = TARGET == 'library' ? "#{BASE_NAME}.dll" : "#{BASE_NAME}.exe"
+FULL_NAME="#{BUILD_DIR}/#{NAME}"
+  
+#(1) RES_OPT = "-resource:resources/#{BASE_NAME}.resources,#{BASE_NAME}.resources"
+RES_OPT = ""
+CLOBBER.include("#{FULL_NAME}")
+
+directory BUILD_DIR
+
+task :default => :compile
+
+task :up do
+  Rake.application.invoke_task("update[f]")
+end
+
+# vedi http://stackoverflow.com/questions/825748/how-do-i-pass-command-line-arguments-to-a-rake-task
+task :upv do
+  Rake.application.invoke_task("update[t]")
+end
+
+desc "Compila!"
+task :compile => FULL_NAME
+#(1) file FULL_NAME => FileList[SRC, :resgen] do |t|
+#(2) file FULL_NAME => FileList[SRC, "#{BUILD_DIR}/#{ASSEMBLY_UNDER_TEST}"] do |t|
+file FULL_NAME => FileList[SRC] do |t|
+  Rake::Task[:force].invoke
+end
+
+desc "Forza la compilazione"
+task :force do
+  sh "#{CSC} -nologo -debug:pdbonly -define:NET -out:#{FULL_NAME} -target:#{TARGET} #{RES_OPT} -lib:#{BUILD_DIR} #{REFS.collect{|r| "-r:" + r}.join(' ')} #{SRC}"
+end
+
+desc "Copia i file definiti in EXTERNAL"
+task :update, [:verbose] => BUILD_DIR do |t, args|
+  EXTERNAL.each do |src, trgt| 
+    if File.exists?(src)
+      if uptodate?(src, [trgt])
+        cp src,trgt, :verbose=>true
+        puts "updated: #{src}" if (args[:verbose] == 't')
+      else 
+        puts "not updated: #{src}" if (args[:verbose] == 't')
+      end
+    else 
+      puts "does't exist: #{src}" if (args[:verbose] == 't')
+    end
+  end
+end
+
+desc "Compila i file di risorse"
+task :resgen => "resources/#{BASE_NAME}.resources"
+
+file "resources/#{BASE_NAME}.resources" => "resources/#{BASE_NAME}.resX" do |t|
+  sh "#{RESGEN} #{t.prerequisites[0]} #{t.name}" 
+end
+
+desc "Esegue i test"
+task :test => FULL_NAME do |t|
+  sh "#{NUNIT} #{t.prerequisites[0]} #{ENV['TF']}"
+end
+
+file "#{BUILD_DIR}/#{ASSEMBLY_UNDER_TEST}" => "../#{BUILD_DIR}/#{ASSEMBLY_UNDER_TEST}" do |t|
+  cp t.prerequisites[0], t.name, :verbose=>true
+end
+
+desc "Conta le righe di codice"
+task :loc do
+  sh "#{NLOC} -nologo -percentage #{SRC}"
+end
+
+desc "Ottiene la versione dall'assembly"
+task :ver do
+  sh "#{NGETVER} -i #{FULL_NAME}"
+end
+
+desc "List referenced assemblies"
+task :dep do
+  sh "#{NGETVER} -i #{FULL_NAME} -r"
+end
+
+desc "Create tags file"
+task :tags => SRC do
+  sh "#{CTAGS} -e #{SRC}"
+end
+
+directory PUBLISH_DIR
+desc 'Upload library to lib.'
+task :publish => [FULL_NAME, PUBLISH_DIR] do
+   sh "cp #{FULL_NAME} #{PUBLISH_DIR}"
+end
+
+desc "Make a build script"
+task :make_script do
+  File.open('build.sh', 'w') do |file|
+    file.puts "#{CSC} -debug:pdbonly -out:#{FULL_NAME} -target:#{TARGET} #{RES_OPT} -lib:#{BUILD_DIR} #{REFS.collect{|r| "-r:" + r}.join(' ')} #{SRC}"
+  end
+end

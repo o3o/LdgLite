@@ -6,7 +6,7 @@
 [assembly: System.Reflection.AssemblyCopyright("Copyright 2011 Gruppo Ragni. All rights reserved.")]
 [assembly: System.Reflection.AssemblyTrademark("Microligne s.r.l")]
 [assembly: System.Reflection.AssemblyCulture("")]
-[assembly: System.Reflection.AssemblyVersion("0.0.1")]
+[assembly: System.Reflection.AssemblyVersion("0.1.0")]
 [assembly: System.Reflection.AssemblyDelaySign(false)]
 [assembly: System.Reflection.AssemblyKeyFile("")]
 [assembly: System.Reflection.AssemblyKeyName("")]

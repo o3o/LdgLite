@@ -1,26 +1,14 @@
 # per compilare con i file di risorse togliere i commenti (1)
 # per usare con unit test togliere i commenti (2)
 require 'rake/clean'
-##############################
-# FUNC
-##############################
-def getver() 
-  File.open 'AssemblyInfo.cs', 'r' do |file|
-    file.each do |line|
-      if line =~ /.+(\d+)\.(\d+)\.(\d+)/
-        #return "#{$1}_" + "%02d" % "#{$2}" + "_" + "%03d" % "#{$3}"
-        return "#{$1}." + "%02d" % "#{$2}"
-      end
-    end
-  end
-  return ""
-end
+require 'rake/packagetask'
 
 ##################
 # SETTING
 ##################
+VERSION = '0.1.0'
 
-SRC = FileList[ '*.cs']
+SRC = FileList['*.cs']
 
 BASE_NAME = "Ldg"
 TARGET = 'exe'
@@ -28,47 +16,44 @@ ASSEMBLY_UNDER_TEST = ""
 
 TOP_DIR = ENV['CS_DIR']
 LIB_DIR = "#{TOP_DIR}/lib"
-BUILD_DIR = 'bin/build-mono'
-PUBLISH_DIR = "#{LIB_DIR}/Microline/#{BASE_NAME}/#{getver}"
-
-#TEST_PKG = ["Moq.dll", "./nunit.framework.dll"]
-# SYS_PKG = [ "System.Data.dll",  "System.Core.dll",  "System.Drawing.dll", "System.Windows.Forms"]
-#  "#{LIB_DIR}/Moq/4.00/Moq.dll"  => "#{BUILD_DIR}/Moq.dll",
-#  "#{LIB_DIR}/nunit.framework/2.05/nunit.framework.dll"  => "#{BUILD_DIR}/nunit.framework.dll",
-#  "#{LIB_DIR}/Ploeh.AutoFixture/Ploeh.AutoFixture.dll" => "#{BUILD_DIR}/Ploeh.AutoFixture.dll",
-#  "#{LIB_DIR}/NBuilder/2.03/FizzWare.NBuilder.dll
-#  "#{LIB_DIR}/0.2/net/SystemWrapper.dll"=> "#{BUILD_DIR}/SystemWrapper.dll",
+BUILD_DIR = "bin/mono"
+PUBLISH_DIR = "#{LIB_DIR}/Microline/#{BASE_NAME}/#{VERSION}"
 
 REFS = [
-#   TEST_PKG, 
-#   SYS_PKG, 
+#  "#{ASSEMBLY_UNDER_TEST}",
   "log4net.dll",
   "CommandLine.dll",
   "FileHelpers.dll", 
   "itextsharp.dll", 
   "System.Data.dll",
   "Mono.Data.Sqlite.dll"
-
 ]
 
-EXgTERNAL = {
+EXTERNAL = {
   "#{LIB_DIR}/log4net/1.02/mono/log4net.dll" => "#{BUILD_DIR}/log4net.dll",
   "#{LIB_DIR}/CommandLine/1.08/CommandLine.dll" => "#{BUILD_DIR}/CommandLine.dll",
   "#{LIB_DIR}/itextsharp/5.00/itextsharp.dll" => "#{BUILD_DIR}/itextsharp.dll",
   "#{LIB_DIR}//FileHelpers/2.00/FileHelpers.dll" => "#{BUILD_DIR}/FileHelpers.dll",
 }
 
+#(1) RES_OPT = "-resource:resources/#{BASE_NAME}.resources,#{BASE_NAME}.resources"
+RES_OPT = ""
+
+#-pkg:glade-sharp-2.0
+COMPILER_OPT = ''
+
+PKG_FILES = FileList["#{BUILD_DIR}/*.exe", "#{BUILD_DIR}/*.dll", "#{BUILD_DIR}/*.log4net"]
+
+
 ##############################
 # PROGRAM
 ##############################
-
-NLOC = "~/nloc"
-NGETVER = "~/ngetversion"
-NGETTEXT = "mono ~/cs/lib/tools/NGetText/NGetText.exe"
-CTAGS = "ctags"
-CSC = "dmcs"
+CSC = "gmcs"
+RESGEN = "resgen2"
 NUNIT = "~/nunit -nologo"
-RESGEN = "resgen"
+NLOC = "~/nloc"
+CTAGS = "etags"
+
 
 ##############################
 # CODING
@@ -77,24 +62,36 @@ RESGEN = "resgen"
 NAME = TARGET == 'library' ? "#{BASE_NAME}.dll" : "#{BASE_NAME}.exe"
 FULL_NAME="#{BUILD_DIR}/#{NAME}"
   
-#(1) RES_OPT = "-resource:resources/#{BASE_NAME}.resources,#{BASE_NAME}.resources"
-RES_OPT = ""
 CLOBBER.include("#{FULL_NAME}")
 
 directory BUILD_DIR
 
 task :default => :compile
+
+desc "Aggiorna i file EXTERNAL"
 task :up do
-  Rake.application.invoke_task("update[f]")
+  Rake.application.invoke_task("update[f,f,f]")
 end
 
+# vedi http://stackoverflow.com/questions/825748/how-do-i-pass-command-line-arguments-to-a-rake-task
+
+desc "Aggiorna i file esterni e visualizza le operazioni eseguite"
 task :upv do
-  Rake.application.invoke_task("update[t]")
+  Rake.application.invoke_task("update[t,f,f]")
+end
+
+desc "Forza l'aggiornamento"
+task :upf do
+  Rake.application.invoke_task("update[t,t,f]")
+end
+desc "Simula l'aggiornamento dei file esterni"
+task :upd do
+  Rake.application.invoke_task("update[f,f,t]")
 end
 
 desc "Compila!"
 task :compile => FULL_NAME
-#(1) file FULL_NAME => FileList[SRC, :resgen] do |t|
+#(1) file FULL_NAME => FileList[SRC, :generate_resources] do |t|
 #(2) file FULL_NAME => FileList[SRC, "#{BUILD_DIR}/#{ASSEMBLY_UNDER_TEST}"] do |t|
 file FULL_NAME => FileList[SRC] do |t|
   Rake::Task[:force].invoke
@@ -102,27 +99,30 @@ end
 
 desc "Forza la compilazione"
 task :force do
-  sh "#{CSC} -debug -out:#{FULL_NAME} -target:#{TARGET} #{RES_OPT} -lib:#{BUILD_DIR} -r:#{REFS.join(',')} #{SRC}"
+  sh "#{CSC} -debug #{COMPILER_OPT} -out:#{FULL_NAME} -target:#{TARGET} #{RES_OPT} -lib:#{BUILD_DIR} -r:#{REFS.join(',')} #{SRC}"
 end
 
-desc "Copia i file definiti in EXTERNAL"
-task :update, [:verbose] => BUILD_DIR do |t, args|
+desc "Aggiorna i file definiti in EXTERNAL"
+task :update, [:verbose, :force, :dry] => BUILD_DIR do |t, args|
   EXTERNAL.each do |src, trgt| 
     if File.exists?(src)
-    if uptodate?(src, [trgt])
-      cp src,trgt, :verbose=>true
-        puts "updated: #{src}" if (args[:verbose] == 't')
+      if uptodate?(src, [trgt]) or args[:force] == 't'
+        if args[:dry] == 't'
+          puts "cp #{src}, #{trgt}, :verbose => true"
+        else
+          cp src, trgt, :verbose => true
+        end
       else 
         puts "not updated: #{src}" if (args[:verbose] == 't')
       end
     else 
-      puts "does't exist: #{src}" if (args[:verbose] == 't')
+      puts "doesn't exist: #{src}"
     end
   end
 end
 
 desc "Compila i file di risorse"
-task :resgen => "resources/#{BASE_NAME}.resources"
+task :generate_resources => "resources/#{BASE_NAME}.resources"
 
 file "resources/#{BASE_NAME}.resources" => "resources/#{BASE_NAME}.resX" do |t|
   sh "#{RESGEN} #{t.prerequisites[0]} #{t.name}" 
@@ -142,30 +142,50 @@ task :loc do
   sh "#{NLOC} -nologo -percentage #{SRC}"
 end
 
-desc "Ottiene la versione dall'assembly"
-task :ver do
-  sh "#{NGETVER} -i #{FULL_NAME}"
-end
 
-desc "List referenced assemblies"
-task :dep do
-  sh "#{NGETVER} -i #{FULL_NAME} -r"
-end
 
 desc "Create tags file"
 task :tags => SRC do
-  sh "#{CTAGS} -e #{SRC}"
+  sh "#{CTAGS} #{SRC}"
 end
 
+task :todo do
+  sh "grep -P '.*(FIXME|TODO|TBD)' *.cs"
+end
 directory PUBLISH_DIR
-desc 'Upload library to lib.'
+desc "Pubblica l'assembly compilato"
+#task :publish => [FULL_NAME, PUBLISH_DIR, :publish_po] do
 task :publish => [FULL_NAME, PUBLISH_DIR] do
    sh "cp #{FULL_NAME} #{PUBLISH_DIR}"
 end
 
-desc "Make a build script"
+task :publish_po  do 
+  sh "cp -r locale #{PUBLISH_DIR}"
+end
+
+desc "Crea uno script per la compilazione"
 task :make_script do
   File.open('build.sh', 'w') do |file|
-    file.puts "#{CSC} -debug:pdbonly -out:#{FULL_NAME} -target:#{TARGET} #{RES_OPT} -lib:#{BUILD_DIR} #{REFS.collect{|r| "-r:" + r}.join(' ')} #{SRC}"
+    file.puts "#{CSC} #{COMPILER_OPT} -debug:pdbonly -out:#{FULL_NAME} -target:#{TARGET} #{RES_OPT} -lib:#{BUILD_DIR} #{REFS.collect{|r| "-r:" + r}.join(' ')} #{SRC}"
   end
+end
+
+desc "Visualizza la versione"
+task :ver do
+  puts "#{VERSION}"
+end
+
+desc "Visualizza la directory di pubblicazione"
+task :print_publish_dir do
+  puts "#{PUBLISH_DIR}"
+end
+
+desc "Aggiorna, compila e pubblica"
+task :all => [:up, :compile, :publish]
+
+Rake::PackageTask.new(BASE_NAME, VERSION) do |p|
+  p.need_tar_bz2 = true
+  p.need_zip = false
+  p.need_tar = false
+  p.package_files = PKG_FILES
 end

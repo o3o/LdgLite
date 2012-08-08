@@ -1,7 +1,6 @@
 namespace Talaran.Ldg {
    public interface IBuilder {
-      void BeginDoc(int year);
-      void BeginReport(string title);
+      void BeginReport(string title, int year);
       void EndReport();
       void Add(Athlete athete);
    }

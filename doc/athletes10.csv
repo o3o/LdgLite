@@ -1,72 +1,72 @@
-1;Anna;Albanello;2002;F;00:49.26
-2;Davide;Sopracolle;1998;M;00:44.89
-3;Lorenzo;Giacomelli;2000;M;00:13.86
-4;Enrico;Giacomelli;1997;M;00:37.35
-5;Simone;Tommasini;1999;M;00:47.40
-6;Federico;De Michiel;2001;M;00:27.18
-7;Nicola;De Polo;2003;M;00:07.32
-8;Giacomo;De Polo;2001;M;00:14.36
-9;Alice;Giannelli;1998;F;00:39.90
-10;Enrico;Gianelli;1997;M;00:40.37
-11;Sergio;Gianelli;2002;M;00:47.77
-12;Greta;Tabacchi;1999;F;00:30.96
-13;Riccardo;Onofri;1999;M;00:15.92
-14;Marco;Casarin;2003;M;00:12.67
-15;Federica;Ciotti;1997;F;00:41.86
-16;Nicola;Ciotti;1999;M;00:19.47
-17;Giovanni;Lozza;2001;M;00:46.80
-18;Claudia;Liguori;2001;F;00:39.11
-19;Margherita;Chiaramonte;2001;F;00:35.55
-20;Daniele;Sopracolle;1997;M;00:52.26
-21;Simone;Momesso;1999;M;00:15.30
-22;Eleonora;Barca;2000;F;00:35.66
-23;Alberto;Kehrer;2000;M;00:19.66
-24;Serena;Candeago;1997;F;00:53.31
-25;Giovanni;Stefani;2006;M;00:13.87
-26;Tito;Silvestri;1999;M;01:13.48
-27;Vera;Silvestri;2002;F;99:99
-28;Alessandra;Zanetti;1999;F;00:13.23
-29;Martina;Zanetti;1997;F;00:26.10
-30;Jessica;Polli;1997;F;00:29.32
-31;Lorenzo;Mazzoleni;1998;M;01:03.88
-32;Sara;Dalle Feste;2002;F;00:51.20
-33;Victoria;Wasi;2001;F;01:00.0
-34;Roberto;Zanoni;2001;M;00:27.47
-35;Silvio;Menardi;1997;M;00:20.55
-36;Matteo;Da Corte;2000;M;00:25.76
-37;Emily Jane;Jack;2000;F;01:02.36
-38;Jeremy;Jack;2002;M;00:48.36
-39;Giada;Durigon;2004;F;00:13.53
-40;Marco;Baltieri;2000;M;00:17.09
-41;Aurora;Ghia;2000;F;00:23.01
-42;Daniele;Olivotto;2000;M;00:43.34
-43;Valentina;De Sandre;2004;F;00:19.40
-44;Isabella;Ravagni;1997;F;99:99
-45;Sara;Basso;2000;F;00:35.34
-46;Cristina;Corona;1998;F;00:41.24
-47;Francesco;Paresini;2003;M;00:10.70
-48;Filippo;Minotto;2004;M;00:15.03
-49;Leonardo;Ciociano;2002;M;01:03.00
-50;Marta;Dall'Antonia;1998;F;01:49.40
-51;Silvia;Dall'Antonia;2000;F;00:20.85
-52;Gaia;Penzo;1999;F;00:26.57
-53;Carolina;De Gerone;2004;F;00:13.24
-54;Giacomo;Spaziani;2003;M;00:11.47
-55;Marco;Del Longo;2001;M;00:40.20
-56;Andrea;Del Longo;2001;M;00:49.00
-57;Luca;Del Longo;2003;M;00:10.66
-58;Francesco;Taufer;2000;M;00:30.68
-59;Davide;Bridda;2003;M;00:23.18
-60;Michele;Bridda;2003;M;00:11.31
-61;Gaia;Ciotti;2005;F;00:19.45
-62;Emma;Ciotti;2004;F;00:18.65
-63;Sofia;Bertoncini;1999;F;00:15.80
-64;Irene;Bertoncini;1997;F;00:37.06
-65;Giulia;Landoni;2000;F;00:48.75
-66;Alexandre;De Sousa Bellatto;2000;M;01:05.56
-67;Giacarlo;Zanon;1999;M;01:34.17
-68;Giada;Marani;2004;F;00:22.90
-69;Francesco;Dall'Asta;2001;M;00:59.06
-70;Francesco;Ebner;2002;M;00:49.11
-71;Francesco;Maschio;2001;M;01:20.45
-72;Elisa;Lovison;2003;F;00:18.57
+1,Anna,Albanello,2002,F,00:49.26
+2,Davide,Sopracolle,1998,M,00:44.89
+3,Lorenzo,Giacomelli,2000,M,00:13.86
+4,Enrico,Giacomelli,1997,M,00:37.35
+5,Simone,Tommasini,1999,M,00:47.40
+6,Federico,De Michiel,2001,M,00:27.18
+7,Nicola,De Polo,2003,M,00:07.32
+8,Giacomo,De Polo,2001,M,00:14.36
+9,Alice,Giannelli,1998,F,00:39.90
+10,Enrico,Gianelli,1997,M,00:40.37
+11,Sergio,Gianelli,2002,M,00:47.77
+12,Greta,Tabacchi,1999,F,00:30.96
+13,Riccardo,Onofri,1999,M,00:15.92
+14,Marco,Casarin,2003,M,00:12.67
+15,Federica,Ciotti,1997,F,00:41.86
+16,Nicola,Ciotti,1999,M,00:19.47
+17,Giovanni,Lozza,2001,M,00:46.80
+18,Claudia,Liguori,2001,F,00:39.11
+19,Margherita,Chiaramonte,2001,F,00:35.55
+20,Daniele,Sopracolle,1997,M,00:52.26
+21,Simone,Momesso,1999,M,00:15.30
+22,Eleonora,Barca,2000,F,00:35.66
+23,Alberto,Kehrer,2000,M,00:19.66
+24,Serena,Candeago,1997,F,00:53.31
+25,Giovanni,Stefani,2006,M,00:13.87
+26,Tito,Silvestri,1999,M,01:13.48
+27,Vera,Silvestri,2002,F,99:99
+28,Alessandra,Zanetti,1999,F,00:13.23
+29,Martina,Zanetti,1997,F,00:26.10
+30,Jessica,Polli,1997,F,00:29.32
+31,Lorenzo,Mazzoleni,1998,M,01:03.88
+32,Sara,Dalle Feste,2002,F,00:51.20
+33,Victoria,Wasi,2001,F,01:00.0
+34,Roberto,Zanoni,2001,M,00:27.47
+35,Silvio,Menardi,1997,M,00:20.55
+36,Matteo,Da Corte,2000,M,00:25.76
+37,Emily Jane,Jack,2000,F,01:02.36
+38,Jeremy,Jack,2002,M,00:48.36
+39,Giada,Durigon,2004,F,00:13.53
+40,Marco,Baltieri,2000,M,00:17.09
+41,Aurora,Ghia,2000,F,00:23.01
+42,Daniele,Olivotto,2000,M,00:43.34
+43,Valentina,De Sandre,2004,F,00:19.40
+44,Isabella,Ravagni,1997,F,99:99
+45,Sara,Basso,2000,F,00:35.34
+46,Cristina,Corona,1998,F,00:41.24
+47,Francesco,Paresini,2003,M,00:10.70
+48,Filippo,Minotto,2004,M,00:15.03
+49,Leonardo,Ciociano,2002,M,01:03.00
+50,Marta,Dall'Antonia,1998,F,01:49.40
+51,Silvia,Dall'Antonia,2000,F,00:20.85
+52,Gaia,Penzo,1999,F,00:26.57
+53,Carolina,De Gerone,2004,F,00:13.24
+54,Giacomo,Spaziani,2003,M,00:11.47
+55,Marco,Del Longo,2001,M,00:40.20
+56,Andrea,Del Longo,2001,M,00:49.00
+57,Luca,Del Longo,2003,M,00:10.66
+58,Francesco,Taufer,2000,M,00:30.68
+59,Davide,Bridda,2003,M,00:23.18
+60,Michele,Bridda,2003,M,00:11.31
+61,Gaia,Ciotti,2005,F,00:19.45
+62,Emma,Ciotti,2004,F,00:18.65
+63,Sofia,Bertoncini,1999,F,00:15.80
+64,Irene,Bertoncini,1997,F,00:37.06
+65,Giulia,Landoni,2000,F,00:48.75
+66,Alexandre,De Sousa Bellatto,2000,M,01:05.56
+67,Giacarlo,Zanon,1999,M,01:34.17
+68,Giada,Marani,2004,F,00:22.90
+69,Francesco,Dall'Asta,2001,M,00:59.06
+70,Francesco,Ebner,2002,M,00:49.11
+71,Francesco,Maschio,2001,M,01:20.45
+72,Elisa,Lovison,2003,F,00:18.57

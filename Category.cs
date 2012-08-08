@@ -1,5 +1,5 @@
 namespace Talaran.Ldg {
-   [FileHelpers.DelimitedRecord(";")] 
+   [FileHelpers.DelimitedRecord(",")] 
    [FileHelpers.ConditionalRecord(FileHelpers.RecordCondition.ExcludeIfBegins, "//")]
    public class Category {
       /**

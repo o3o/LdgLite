@@ -13,6 +13,27 @@ namespace Talaran.Ldg {
          command.CommandText = "SELECT id FROM at";
          return command.ExecuteScalar() != null;
       }
+      public void Update(Athlete athlete) {
+         string sql = "UPDATE at SET ";
+         sql += string.Format ("name = '{0}', SET surname = '{1}', set year = {2}, set gender = '{3}', set time = '{4}' ",
+                               athlete.Name, 
+                               athlete.Surname, 
+                               athlete.Year, 
+                               athlete.Gender, 
+                               athlete.Time
+                               );
+         sql += string.Format("WHERE id={0}", athlete.Id);
+         command.CommandText = sql;
+         command.ExecuteNonQuery();
+      }
+      public void UpdateTime(int id, string time) {
+         string sql = "UPDATE at SET ";
+         sql += string.Format("time = '{0}' ", time);
+         sql += string.Format("WHERE id={0}", id);
+         command.CommandText = sql;
+         command.ExecuteNonQuery();
+      }
+
       public void  DeleteAll() {
          command.CommandText = "DELETE FROM at";
          command.ExecuteNonQuery();
