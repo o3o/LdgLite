@@ -19,29 +19,16 @@ namespace Talaran.Ldg {
 
             connection.Open();
             var command = connection.CreateCommand();
-            command.CommandText =
-              "CREATE TABLE IF NOT EXISTS at (id INTEGER PRIMARY KEY  NOT NULL,name VARCHAR,surname VARCHAR,year INTEGER,gender CHAR,time VARCHAR)";
-            command.ExecuteNonQuery();
             var repo = new AthleteRepository(command);
+            repo.CreateTableIfNotExists();
             switch (options.Action) {
                case Action.Module: {
-                  // 10mm d=> 28pt
-                  // 15mm => 42pt
-                  //float marginLeft, float marginRight, float marginTop, float marginBottom
-                  var document = new iTextSharp.text.Document(iTextSharp.text.PageSize.A4, 10, 10, 36, 36);
-                  iTextSharp.text.pdf.PdfWriter.GetInstance(document,
-                                                            new System.IO.FileStream("./module.pdf", System.IO.FileMode.Create));
-                  document.Open();
-                  var builder = new ModuleBuilder(document, options.YearEdition, 10);
-                  for (int page = 0; page < 10; page++) {
-                     builder.AddPage();
-                  } 
-                  document.Close();
+                  CreateModule(options);
                   break;
                }
                case Action.Insert: {
                   System.Console.WriteLine("Drop all results?[y/N]?"); 
-                  string yes  = System.Console.ReadLine(); 
+                  string yes = System.Console.ReadLine(); 
                   if (yes == "y") {
                      FileHelpers.FileHelperEngine<Athlete> engine = new FileHelpers.FileHelperEngine<Athlete>();
                      Athlete[] athletes = engine.ReadFile(options.Input);
@@ -70,7 +57,6 @@ namespace Talaran.Ldg {
                      builder = new PdfBuilder(document);
                   }
                   
-
                   Category[] cats = GetCategories(catFileName);
                   foreach (Category cat in cats) {
                      if (log.IsDebugEnabled) log.Debug("parse" + cat.Id);
@@ -114,11 +100,27 @@ namespace Talaran.Ldg {
             connection.Close();
          }
       }
+      
+      private static void CreateModule(Options options) {
+         // 10mm d=> 28pt
+         // 15mm => 42pt
+         //float marginLeft, float marginRight, float marginTop, float marginBottom
+         var document = new iTextSharp.text.Document(iTextSharp.text.PageSize.A4, 10, 10, 36, 36);
+         iTextSharp.text.pdf.PdfWriter.GetInstance(document,
+                                                   new System.IO.FileStream("./moduloDiIscrizione.pdf", System.IO.FileMode.Create));
+         document.Open();
+         var builder = new ModuleBuilder(document, options.YearEdition, 10);
+         for (int page = 0; page < 10; page++) {
+            builder.AddPage();
+         } 
+         document.Close();
+      }
+
       private static Category[] GetCategories(string filename) {
          FileHelpers.FileHelperEngine<Category> engineCat = new FileHelpers.FileHelperEngine<Category>();
          return engineCat.ReadFile(filename);
-         
       }
+
       private static string GetCatFileName(Options options) {
          string catFileName = string.Empty;
          switch (options.Action) {

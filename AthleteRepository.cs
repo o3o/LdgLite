@@ -3,12 +3,15 @@ namespace Talaran.Ldg {
    public class AthleteRepository: IAthleteRepository {
       private readonly System.Data.IDbCommand command;
       public AthleteRepository(System.Data.IDbCommand command) {
-         if (command == null) {
-            throw new System.ArgumentNullException("command", "command cannot be null"); 
-         } else {
-            this.command = command;
-         }
+         Assumes.NotNull(command, "command");
+         this.command = command;
       }
+      public void CreateTableIfNotExists() {
+         command.CommandText =
+           "CREATE TABLE IF NOT EXISTS at (id INTEGER PRIMARY KEY  NOT NULL,name VARCHAR,surname VARCHAR,year INTEGER,gender CHAR,time VARCHAR)";
+         command.ExecuteNonQuery();
+      }
+
       public bool IsNew(Athlete athlete) {
          command.CommandText = "SELECT id FROM at";
          return command.ExecuteScalar() != null;
